@@ -1,0 +1,3 @@
+#LiTe wedDAV server
+
+Simple webdav server with htpassword authentification and ssl.
