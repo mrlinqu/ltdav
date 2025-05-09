@@ -6,6 +6,9 @@ ifndef BIN_DIR
 BIN_DIR = $(LOCAL_BIN)
 endif
 
+BUILD_DIR := $(CURDIR)/cmd/ltdav $(CURDIR)/cmd/httpasswd
+MAIN_BUILD_DIR := $(CURDIR)/cmd/ltdav
+
 # Версия Go. Используется для проброса в LDFLAGS и проверках.
 GO_MAJOR_VERSION := $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f1)
 GO_MINOR_VERSION := $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f2)
@@ -23,7 +26,7 @@ GO_MIN_SUPPORTED_MINOR_VERSION := 20
 APP_VERSION := $(if $(CI_COMMIT_REF_SLUG),$(CI_COMMIT_REF_SLUG),$(if $(GIT_BRANCH),$(GIT_BRANCH),$(GIT_HASH)))
 
 # CI_PROJECT_ID is set in Gitlab CI, but we will fallback to app name if not present
-CI_PROJECT_ID ?= catalog-api
+CI_PROJECT_ID ?= ltdav
 
 # Короткий хеш коммита.
 GIT_HASH := $(shell git log --format="%h" --max-count 1 2> /dev/null)
@@ -40,7 +43,6 @@ BUILD_TS := $(shell date +%FT%T%z)
 # Переменные, переопределяемые в приложении на этапе сборки.
 # https://pkg.go.dev/cmd/go@go1.21.1#hdr-Compile_packages_and_dependencies
 LDFLAGS = \
-    -X 'github.com/mrlinqu/ltdav/internal/config/app.Name=catalog-api' \
     -X 'github.com/mrlinqu/ltdav/internal/config/app.ProjectID=$(CI_PROJECT_ID)' \
     -X 'github.com/mrlinqu/ltdav/internal/config/app.Version=$(APP_VERSION)' \
     -X 'github.com/mrlinqu/ltdav/internal/config/app.GoVersion=$(GO_VERSION_SHORT)' \
@@ -49,15 +51,18 @@ LDFLAGS = \
     -X 'github.com/mrlinqu/ltdav/internal/config/app.GitHash=$(GIT_HASH)' \
     -X 'github.com/mrlinqu/ltdav/internal/config/app.GitBranch=$(GIT_BRANCH)'
 
-.build: .validate-min-go-version
-	$(BUILD_ENVPARMS) go build -o="$(BIN_DIR)/" -ldflags "$(LDFLAGS)" ./cmd/ltdav
+.build: .validate-min-go-version $(BUILD_DIR)
+	$(BUILD_DIR): APP_NAME := $(dir $@)
+	$(BUILD_DIR): LDFLAGS += -X 'github.com/mrlinqu/ltdav/internal/config/app.Name=$(APP_NAME)'
+	$(BUILD_DIR):
+		$(BUILD_ENVPARMS) go build -o="$(BIN_DIR)/$(APP_NAME)" -ldflags "$(LDFLAGS)" $@
 
 build: .build ## Запустить сборку приложения
 
 .run: .validate-min-go-version
 	go run \
 		-ldflags "$(LDFLAGS)" \
-		./cmd/ltdav
+		$(MAIN_BUILD_DIR)
 
 run: .run ## Запустить приложение локально в режиме разработки
 

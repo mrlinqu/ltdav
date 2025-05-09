@@ -8,11 +8,12 @@ import (
 )
 
 const (
-	WorkDir    = "work_dir"
-	Addr       = "addr"
-	CertPath   = "cert_path"
-	KeyPath    = "key_path"
-	AccessFile = "access_file"
+	WorkDir  = "work_dir"
+	Addr     = "addr"
+	CertPath = "cert_path"
+	KeyPath  = "key_path"
+	AuthFile = "auth_file"
+	Realm    = "auth_realm"
 )
 
 var defaultValues = map[string]string{
@@ -21,7 +22,7 @@ var defaultValues = map[string]string{
 }
 
 const (
-	envPrefix = "DAV_SERVER_"
+	envPrefix = "LTDAV_"
 )
 
 type configStorage map[string]string
@@ -37,7 +38,8 @@ func Init(ctx context.Context) context.Context {
 	addr := flag.String("l", "", "address to listen. Default 0.0.0.0:8080")
 	cert := flag.String("c", "", "Path to TLS cert file")
 	key := flag.String("k", "", "Path to TLS key file")
-	access := flag.String("a", "", "Path to httaccess file")
+	auth := flag.String("a", "", "Path to auth file")
+	realm := flag.String("r", "", "Auth realm text")
 
 	flag.Parse()
 
@@ -47,7 +49,8 @@ func Init(ctx context.Context) context.Context {
 	cfg[Addr] = *addr
 	cfg[CertPath] = *cert
 	cfg[KeyPath] = *key
-	cfg[AccessFile] = *access
+	cfg[AuthFile] = *auth
+	cfg[Realm] = *realm
 
 	return context.WithValue(ctx, configContextKey, cfg)
 }

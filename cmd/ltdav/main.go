@@ -8,10 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mrlinqu/ltdav/internal/config"
-	x509_keypair_reloader "github.com/mrlinqu/ltdav/internal/x509-keypair-reloader"
+	"github.com/mrlinqu/ltdav/internal/app/ltdav/config"
+	dav_server "github.com/mrlinqu/ltdav/internal/dav-server"
 	"github.com/rs/zerolog/log"
-	"golang.org/x/net/webdav"
 )
 
 func main() {
@@ -28,47 +27,16 @@ func main() {
 		log.Panic().Msg("listen addr is not defined")
 	}
 
-	// if s.AuthBasicUserFile != "" {
-	// 	sp, err := secret_provider.NewHtpasswordProvider(s.AuthBasicUserFile)
-	// 	if err != nil {
-	// 		return errors.Wrap(err, "htpassword error")
-	// 	}
-
-	// 	handler = http_auth.NewBasicAuthInterceptor(handler, sp, "")
-	// }
-
-	srv := &http.Server{
-		Addr: listenAddr,
-		Handler: &webdav.Handler{
-			FileSystem: webdav.Dir(workingDir),
-			LockSystem: webdav.NewMemLS(),
-			Logger:     logger,
-		},
-	}
-
 	tlsCertPath := config.GetValue(ctx, config.CertPath)
 	tlsKeyPath := config.GetValue(ctx, config.KeyPath)
+	authFile := config.GetValue(ctx, config.AuthFile)
 
-	tlsEnable := tlsCertPath != "" && tlsKeyPath != ""
-
-	if tlsEnable {
-		reloader, err := x509_keypair_reloader.New(ctx, tlsCertPath, tlsKeyPath)
-		if err != nil {
-			log.Panic().Err(err).Msg("create x509 keypair reloader")
-		}
-
-		srv.TLSConfig.GetCertificate = reloader.GetCertificateFunc()
-	}
+	srv := dav_server.New(listenAddr, workingDir).
+		WithTls(tlsCertPath, tlsKeyPath).
+		WithAuth(authFile, "aaa")
 
 	go func() {
-		var err error
-
-		if tlsEnable {
-			err = srv.ListenAndServeTLS("", "")
-		} else {
-			err = srv.ListenAndServe()
-		}
-
+		err := srv.ListenAndServe(ctx)
 		if err != nil && err != http.ErrServerClosed {
 			log.Error().Err(err).Msg("server listen")
 		}
@@ -103,19 +71,5 @@ func main() {
 		os.Exit(1)
 	case <-ctx.Done():
 		os.Exit(1)
-	}
-}
-
-func logger(r *http.Request, err error) {
-	if err != nil {
-		log.Error().Err(err).
-			Str("URL", r.URL.String()).
-			Str("Method", r.Method).
-			Msg("webdav error")
-	} else {
-		log.Debug().
-			Str("URL", r.URL.String()).
-			Str("Method", r.Method).
-			Msg("webdav debug")
 	}
 }

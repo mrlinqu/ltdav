@@ -1,6 +1,31 @@
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
+# github.com/go-crypt/crypt v0.3.2
+## explicit; go 1.22
+github.com/go-crypt/crypt
+github.com/go-crypt/crypt/algorithm
+github.com/go-crypt/crypt/algorithm/argon2
+github.com/go-crypt/crypt/algorithm/bcrypt
+github.com/go-crypt/crypt/algorithm/md5crypt
+github.com/go-crypt/crypt/algorithm/pbkdf2
+github.com/go-crypt/crypt/algorithm/plaintext
+github.com/go-crypt/crypt/algorithm/scrypt
+github.com/go-crypt/crypt/algorithm/sha1crypt
+github.com/go-crypt/crypt/algorithm/shacrypt
+github.com/go-crypt/crypt/internal/encoding
+github.com/go-crypt/crypt/internal/math
+github.com/go-crypt/crypt/internal/random
+# github.com/go-crypt/x v0.3.2
+## explicit; go 1.22
+github.com/go-crypt/x/argon2
+github.com/go-crypt/x/base64
+github.com/go-crypt/x/bcrypt
+github.com/go-crypt/x/blake2b
+github.com/go-crypt/x/blowfish
+github.com/go-crypt/x/crypt
+github.com/go-crypt/x/pbkdf2
+github.com/go-crypt/x/scrypt
 # github.com/mattn/go-colorable v0.1.13
 ## explicit; go 1.15
 github.com/mattn/go-colorable
@@ -19,9 +44,10 @@ github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
 github.com/rs/zerolog/log
-# github.com/stretchr/testify v1.9.0
+# github.com/stretchr/testify v1.10.0
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
+github.com/stretchr/testify/assert/yaml
 # golang.org/x/crypto v0.22.0
 ## explicit; go 1.18
 golang.org/x/crypto/bcrypt
@@ -30,9 +56,15 @@ golang.org/x/crypto/blowfish
 ## explicit; go 1.18
 golang.org/x/net/webdav
 golang.org/x/net/webdav/internal/xml
-# golang.org/x/sys v0.19.0
+# golang.org/x/sys v0.28.0
 ## explicit; go 1.18
+golang.org/x/sys/cpu
+golang.org/x/sys/plan9
 golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/term v0.27.0
+## explicit; go 1.18
+golang.org/x/term
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
