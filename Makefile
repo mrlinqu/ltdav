@@ -6,7 +6,7 @@ ifndef BIN_DIR
 BIN_DIR = $(LOCAL_BIN)
 endif
 
-BUILD_DIR := $(CURDIR)/cmd/ltdav $(CURDIR)/cmd/httpasswd
+BUILD_DIR := $(CURDIR)/cmd/ltdav $(CURDIR)/cmd/htpasswd
 MAIN_BUILD_DIR := $(CURDIR)/cmd/ltdav
 
 # Версия Go. Используется для проброса в LDFLAGS и проверках.
@@ -51,15 +51,15 @@ LDFLAGS = \
     -X 'github.com/mrlinqu/ltdav/internal/config/app.GitHash=$(GIT_HASH)' \
     -X 'github.com/mrlinqu/ltdav/internal/config/app.GitBranch=$(GIT_BRANCH)'
 
-.build: .validate-min-go-version $(BUILD_DIR)
-	$(BUILD_DIR): APP_NAME := $(dir $@)
-	$(BUILD_DIR): LDFLAGS += -X 'github.com/mrlinqu/ltdav/internal/config/app.Name=$(APP_NAME)'
-	$(BUILD_DIR):
-		$(BUILD_ENVPARMS) go build -o="$(BIN_DIR)/$(APP_NAME)" -ldflags "$(LDFLAGS)" $@
+.build: $(BUILD_DIR)
+$(BUILD_DIR):
+        $(eval APP_NAME = $(shell basename $@))
+        $(eval LDFLAGS += -X 'github.com/mrlinqu/ltdav/internal/config/app.Name=$(APP_NAME)')
+        $(BUILD_ENVPARMS) go build -o="$(BIN_DIR)/$(APP_NAME)" -ldflags "$(LDFLAGS)" $@
 
 build: .build ## Запустить сборку приложения
 
-.run: .validate-min-go-version
+.run:
 	go run \
 		-ldflags "$(LDFLAGS)" \
 		$(MAIN_BUILD_DIR)
@@ -152,12 +152,6 @@ lint-full: .lint-full ## Запуск golangci-lint по всем файлам �
 
 deps: .deps ## Установить зависимости (go mod download)
 
-# Валидация минимально поддерживаемой версии Go.
-.validate-min-go-version:
-	$(call _validate_go_version_func,\
-		$(GO_MIN_SUPPORTED_MAJOR_VERSION),\
-		$(GO_MIN_SUPPORTED_MINOR_VERSION))
-
 # Объявляем, что текущие команды не являются файлами и
 # инструктируем Makefile не искать изменений в файловой системе.
 .PHONY: \
@@ -165,7 +159,6 @@ deps: .deps ## Установить зависимости (go mod download)
 	.install-lint \
 	install-lint \
 	.lint \
-	.validate-min-go-version \
 	lint \
 	.lint-full \
 	lint-full \
@@ -176,4 +169,5 @@ deps: .deps ## Установить зависимости (go mod download)
 	.build \
 	build \
 	.run \
-	run
+	run \
+	$(BUILD_DIR)
