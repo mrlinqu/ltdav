@@ -14,14 +14,9 @@ jobs:
         uses: actions/setup-go@v5
         with:
             go-version: '1.23.x'
-      
-      - name: list
-        run: |
-          pwd
-          ls -a ./
 
       - name: Install dependencies
-        run: go get .
+        run: go get ./...
 
       - name: Tests
         run: make test
