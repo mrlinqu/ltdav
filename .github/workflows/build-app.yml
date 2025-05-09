@@ -1,4 +1,4 @@
-name: Build
+name: build_app
 
 on:
   workflow_dispatch
@@ -22,7 +22,7 @@ jobs:
 
       - name: Build
         run: make build
-        
+
       - name: Upload Go test results
         uses: actions/upload-artifact@v4
         with:
