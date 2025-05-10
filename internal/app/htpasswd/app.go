@@ -69,7 +69,7 @@ func (a App) Run(cfg config.Config) error {
 
 func openInFile(cfg config.Config) (io.ReadCloser, error) {
 	if cfg.Create {
-		return io.NopCloser(nil), nil
+		return io.NopCloser(bytes.NewBuffer([]byte{})), nil
 	}
 
 	if cfg.FileName == "" {

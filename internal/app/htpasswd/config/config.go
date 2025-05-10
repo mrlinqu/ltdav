@@ -5,9 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
-
-	"github.com/rs/zerolog/log"
 )
 
 type Config struct {
@@ -56,8 +53,6 @@ func New(allArgs []string) (Config, error) {
 	}
 
 	args := ret.fs.Args()
-
-	log.Debug().Str("args", strings.Join(args, ",")).Msg("vvvvvvv")
 
 	if len(args) < 1 {
 		return ret, errors.New(ret.usage())
