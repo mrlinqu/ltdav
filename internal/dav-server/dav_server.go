@@ -2,7 +2,6 @@ package dav_server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	http_auth "github.com/mrlinqu/ltdav/internal/http-auth"
@@ -48,8 +47,6 @@ func (s *DavServer) WithAuth(passwdFilePath string, realm string) *DavServer {
 }
 
 func (s *DavServer) ListenAndServe(ctx context.Context) error {
-	fmt.Printf("aaaaaaaaa")
-
 	log.Debug().
 		Str("listenAddr", s.listenAddr).
 		Str("workingDir", s.workingDir).

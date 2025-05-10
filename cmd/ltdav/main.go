@@ -17,7 +17,7 @@ import (
 func main() {
 	ctx := config.Init(context.Background())
 
-	proj_cfg.LogProjetInfo()
+	proj_cfg.LogBuildInfo()
 
 	workingDir := config.GetValue(ctx, config.WorkDir)
 	listenAddr := config.GetValue(ctx, config.Addr)

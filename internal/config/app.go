@@ -12,7 +12,7 @@ var (
 	GitBranch string
 )
 
-func LogProjetInfo() {
+func LogBuildInfo() {
 	log.Debug().
 		Str("ProjectID", ProjectID).
 		Str("Version", Version).
@@ -20,5 +20,6 @@ func LogProjetInfo() {
 		Str("BuildDate", BuildDate).
 		Str("GitLog", GitLog).
 		Str("GitHash", GitHash).
-		Str("GitBranch", GitBranch)
+		Str("GitBranch", GitBranch).
+		Msg("build info")
 }
