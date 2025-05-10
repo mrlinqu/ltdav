@@ -29,7 +29,7 @@ type Config struct {
 	Username string
 	Password string
 
-	Args []string
+	//Args []string
 }
 
 func New(allArgs []string) (Config, error) {
@@ -55,13 +55,29 @@ func New(allArgs []string) (Config, error) {
 		return ret, err
 	}
 
-	ret.Args = ret.fs.Args()
+	args := ret.fs.Args()
 
-	if len(ret.Args) < 1 {
+	log.Debug().Str("args", strings.Join(args, ",")).Msg("vvvvvvv")
+
+	if len(args) < 1 {
 		return ret, errors.New(ret.usage())
 	}
 
-	log.Debug().Str("args", strings.Join(ret.Args, ",")).Msg("vvvvvvv")
+	if !ret.NotUpdate {
+		if len(args) < 2 {
+			return ret, errors.New(ret.usage())
+		}
+
+		ret.FileName = args[0]
+
+		args = args[1:]
+	}
+
+	ret.Username = args[0]
+
+	if len(args) > 1 {
+		ret.Password = args[1]
+	}
 
 	return ret, nil
 }
