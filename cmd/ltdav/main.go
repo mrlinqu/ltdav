@@ -9,12 +9,15 @@ import (
 	"time"
 
 	"github.com/mrlinqu/ltdav/internal/app/ltdav/config"
+	proj_cfg "github.com/mrlinqu/ltdav/internal/config"
 	dav_server "github.com/mrlinqu/ltdav/internal/dav-server"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	ctx := config.Init(context.Background())
+
+	proj_cfg.LogProjetInfo()
 
 	workingDir := config.GetValue(ctx, config.WorkDir)
 	listenAddr := config.GetValue(ctx, config.Addr)
