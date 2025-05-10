@@ -74,6 +74,7 @@ func openInFile(cfg config.Config) (io.ReadCloser, error) {
 	}
 
 	if cfg.FileName == "" {
+		log.Debug().Msg("ffffffff")
 		return nil, nil
 	}
 
