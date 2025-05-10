@@ -68,11 +68,20 @@ func (a App) Run(cfg config.Config) error {
 }
 
 func openInFile(cfg config.Config) (io.ReadCloser, error) {
+	if cfg.Create {
+		return io.NopCloser(nil), nil
+	}
+
 	if cfg.FileName == "" {
 		return nil, nil
 	}
 
-	return os.Open(cfg.FileName)
+	ret, err := os.Open(cfg.FileName)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret, nil
 }
 
 func openOutFile(cfg config.Config) (io.WriteCloser, error) {
