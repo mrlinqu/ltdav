@@ -47,6 +47,15 @@ func (s *DavServer) WithAuth(passwdFilePath string, realm string) *DavServer {
 }
 
 func (s *DavServer) ListenAndServe(ctx context.Context) error {
+	log.Debug().
+		Str("listenAddr", s.listenAddr).
+		Str("workingDir", s.workingDir).
+		Str("certPath", s.certPath).
+		Str("keyPath", s.keyPath).
+		Str("passwdFilePath", s.passwdFilePath).
+		Str("realm", s.realm).
+		Msg("starting dav server")
+
 	s.srv = &http.Server{
 		Addr: s.listenAddr,
 		Handler: &webdav.Handler{
