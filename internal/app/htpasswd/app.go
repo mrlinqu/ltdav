@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/mrlinqu/ltdav/internal/app/htpasswd/config"
+	"github.com/rs/zerolog/log"
 )
 
 type App struct{}
@@ -80,6 +81,8 @@ func openInFile(cfg config.Config) (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	log.Debug().Str("err", err.Error()).Msg("ddddddddddddddd")
 
 	return ret, nil
 }
