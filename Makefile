@@ -53,8 +53,6 @@ LDFLAGS = \
 
 .build: $(BUILD_DIR)
 $(BUILD_DIR):
-	$(eval APP_NAME = $(shell basename $@))
-	$(eval LDFLAGS += -X 'github.com/mrlinqu/ltdav/internal/config/config.Name=$(APP_NAME)')
 	$(BUILD_ENVPARMS) go build -o="$(BIN_DIR)/$(APP_NAME)" -ldflags "$(LDFLAGS)" $@
 
 build: .build ## Запустить сборку приложения
