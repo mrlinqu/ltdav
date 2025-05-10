@@ -43,16 +43,18 @@ BUILD_TS := $(shell date +%FT%T%z)
 # Переменные, переопределяемые в приложении на этапе сборки.
 # https://pkg.go.dev/cmd/go@go1.21.1#hdr-Compile_packages_and_dependencies
 LDFLAGS = \
-    -X 'github.com/mrlinqu/ltdav/internal/config/config.ProjectID=$(CI_PROJECT_ID)' \
-    -X 'github.com/mrlinqu/ltdav/internal/config/config.Version=$(APP_VERSION)' \
-    -X 'github.com/mrlinqu/ltdav/internal/config/config.GoVersion=$(GO_VERSION_SHORT)' \
-    -X 'github.com/mrlinqu/ltdav/internal/config/config.BuildDate=$(BUILD_TS)' \
-    -X 'github.com/mrlinqu/ltdav/internal/config/config.GitLog=$(GIT_LOG)' \
-    -X 'github.com/mrlinqu/ltdav/internal/config/config.GitHash=$(GIT_HASH)' \
-    -X 'github.com/mrlinqu/ltdav/internal/config/config.GitBranch=$(GIT_BRANCH)'
+    -X 'github.com/mrlinqu/ltdav/internal/config.ProjectID=$(CI_PROJECT_ID)' \
+    -X 'github.com/mrlinqu/ltdav/internal/config.Version=$(APP_VERSION)' \
+    -X 'github.com/mrlinqu/ltdav/internal/config.GoVersion=$(GO_VERSION_SHORT)' \
+    -X 'github.com/mrlinqu/ltdav/internal/config.BuildDate=$(BUILD_TS)' \
+    -X 'github.com/mrlinqu/ltdav/internal/config.GitLog=$(GIT_LOG)' \
+    -X 'github.com/mrlinqu/ltdav/internal/config.GitHash=$(GIT_HASH)' \
+    -X 'github.com/mrlinqu/ltdav/internal/config.GitBranch=$(GIT_BRANCH)'
 
 .build: $(BUILD_DIR)
 $(BUILD_DIR):
+	$(eval APP_NAME = $(shell basename $@))
+	$(eval LDFLAGS += -X 'github.com/mrlinqu/ltdav/internal/config.Name=$(APP_NAME)')
 	$(BUILD_ENVPARMS) go build -o="$(BIN_DIR)/$(APP_NAME)" -ldflags "$(LDFLAGS)" $@
 
 build: .build ## Запустить сборку приложения
