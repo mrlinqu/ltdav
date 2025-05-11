@@ -21,7 +21,7 @@ func veryfy(cfg config.Config, in io.Reader) error {
 
 		token := strings.SplitN(line, ":", 2)
 
-		valid, err := crypt.CheckPassword(cfg.Password, token[1])
+		valid, err := crypt.CheckPasswordWithPlainText(cfg.Password, token[1])
 		if err != nil {
 			return errors.Wrap(err, "passwod check error")
 		}
