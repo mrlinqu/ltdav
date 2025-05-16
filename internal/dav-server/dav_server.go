@@ -2,6 +2,7 @@ package dav_server
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 
 	http_auth "github.com/mrlinqu/ltdav/internal/http-auth"
@@ -80,7 +81,13 @@ func (s *DavServer) ListenAndServe(ctx context.Context) error {
 			return errors.Wrap(err, "create x509_keypair_reloader")
 		}
 
-		s.srv.TLSConfig.GetCertificate = keyReloader.GetCertificateFunc()
+		s.srv.TLSConfig = &tls.Config{
+			MinVersion:               tls.VersionTLS13,
+			PreferServerCipherSuites: true,
+			GetCertificate:           keyReloader.GetCertificateFunc(),
+		}
+
+		//s.srv.TLSConfig.GetCertificate = keyReloader.GetCertificateFunc()
 
 		return s.srv.ListenAndServeTLS("", "")
 	}
