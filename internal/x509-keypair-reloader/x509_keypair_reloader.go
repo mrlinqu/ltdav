@@ -46,11 +46,6 @@ func (kp *X509KeypairReloader) watch(ctx context.Context, ch <-chan os.Signal) {
 	for {
 		select {
 		case <-ch:
-			log.Debug().
-				Str("certPath", kp.certPath).
-				Str("keyPath", kp.keyPath).
-				Msg("Reloading TLS certificate and key")
-
 			err := kp.reload()
 			if err != nil {
 				log.Error().
@@ -64,6 +59,11 @@ func (kp *X509KeypairReloader) watch(ctx context.Context, ch <-chan os.Signal) {
 }
 
 func (kp *X509KeypairReloader) reload() error {
+	log.Debug().
+		Str("certPath", kp.certPath).
+		Str("keyPath", kp.keyPath).
+		Msg("Reloading TLS certificate and key")
+
 	pair, err := tls.LoadX509KeyPair(kp.certPath, kp.keyPath)
 	if err != nil {
 		return err
