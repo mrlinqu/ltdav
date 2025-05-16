@@ -30,8 +30,8 @@ func main() {
 		log.Panic().Msg("listen addr is not defined")
 	}
 
-	tlsCertPath := config.GetValue(ctx, config.CertPath)
-	tlsKeyPath := config.GetValue(ctx, config.KeyPath)
+	tlsCertPath := config.GetValue(ctx, config.CertFile)
+	tlsKeyPath := config.GetValue(ctx, config.KeyFile)
 	authFile := config.GetValue(ctx, config.AuthFile)
 
 	srv := dav_server.New(listenAddr, workingDir).

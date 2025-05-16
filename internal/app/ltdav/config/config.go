@@ -10,15 +10,15 @@ import (
 const (
 	WorkDir  = "work_dir"
 	Addr     = "addr"
-	CertPath = "cert_path"
-	KeyPath  = "key_path"
+	CertFile = "cert_file"
+	KeyFile  = "key_file"
 	AuthFile = "auth_file"
 	Realm    = "auth_realm"
 )
 
 var defaultValues = map[string]string{
 	WorkDir: "./",
-	Addr:    "0.0.0.0:8080",
+	Addr:    "0.0.0.0:9800",
 }
 
 const (
@@ -35,7 +35,7 @@ var configContextKey = struct{}{}
 
 func Init(ctx context.Context) context.Context {
 	dir := flag.String("d", "", "Directory to serve from. Default is CWD")
-	addr := flag.String("l", "", "address to listen. Default 0.0.0.0:8080")
+	addr := flag.String("l", "", "address to listen. Default 0.0.0.0:9800")
 	cert := flag.String("c", "", "Path to TLS cert file")
 	key := flag.String("k", "", "Path to TLS key file")
 	auth := flag.String("a", "", "Path to auth file")
@@ -47,8 +47,8 @@ func Init(ctx context.Context) context.Context {
 
 	cfg[WorkDir] = *dir
 	cfg[Addr] = *addr
-	cfg[CertPath] = *cert
-	cfg[KeyPath] = *key
+	cfg[CertFile] = *cert
+	cfg[KeyFile] = *key
 	cfg[AuthFile] = *auth
 	cfg[Realm] = *realm
 

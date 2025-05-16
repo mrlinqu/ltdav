@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine3.20 as bld
+FROM golang:1.24-alpine3.20 as bld
 RUN apk add make git
 WORKDIR /src
 COPY ["./","./"]
