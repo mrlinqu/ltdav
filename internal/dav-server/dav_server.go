@@ -3,13 +3,14 @@ package dav_server
 import (
 	"context"
 	"crypto/tls"
+	"log"
 	"net/http"
 
 	http_auth "github.com/mrlinqu/ltdav/internal/http-auth"
 	secret_provider "github.com/mrlinqu/ltdav/internal/http-auth/secret-provider"
 	x509_keypair_reloader "github.com/mrlinqu/ltdav/internal/x509-keypair-reloader"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
+	zlog "github.com/rs/zerolog/log"
 	"golang.org/x/net/webdav"
 )
 
@@ -48,7 +49,7 @@ func (s *DavServer) WithAuth(passwdFilePath string, realm string) *DavServer {
 }
 
 func (s *DavServer) ListenAndServe(ctx context.Context) error {
-	log.Debug().
+	zlog.Debug().
 		Str("listenAddr", s.listenAddr).
 		Str("workingDir", s.workingDir).
 		Str("certPath", s.certPath).
@@ -64,6 +65,8 @@ func (s *DavServer) ListenAndServe(ctx context.Context) error {
 			LockSystem: webdav.NewMemLS(),
 			Logger:     s.logger,
 		},
+		ErrorLog: log.New(zlog.Logger, "", 0),
+		//ErrorLog: logger.New(&fwdToZapWriter{logger}, "", 0),
 	}
 
 	if s.passwdFilePath != "" {
@@ -82,9 +85,8 @@ func (s *DavServer) ListenAndServe(ctx context.Context) error {
 		}
 
 		s.srv.TLSConfig = &tls.Config{
-			MinVersion:               tls.VersionTLS13,
-			PreferServerCipherSuites: true,
-			GetCertificate:           keyReloader.GetCertificateFunc(),
+			//MinVersion:               tls.VersionTLS13,
+			GetCertificate: keyReloader.GetCertificateFunc(),
 		}
 
 		//s.srv.TLSConfig.GetCertificate = keyReloader.GetCertificateFunc()
@@ -101,12 +103,12 @@ func (s *DavServer) Shutdown(ctx context.Context) error {
 
 func (s *DavServer) logger(r *http.Request, err error) {
 	if err != nil {
-		log.Error().Err(err).
+		zlog.Error().Err(err).
 			Str("URL", r.URL.String()).
 			Str("Method", r.Method).
 			Msg("webdav error")
 	} else {
-		log.Debug().
+		zlog.Debug().
 			Str("URL", r.URL.String()).
 			Str("Method", r.Method).
 			Msg("webdav debug")

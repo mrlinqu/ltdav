@@ -78,6 +78,8 @@ func (kp *X509KeypairReloader) reload() error {
 
 func (kp *X509KeypairReloader) GetCertificateFunc() func(*tls.ClientHelloInfo) (*tls.Certificate, error) {
 	return func(*tls.ClientHelloInfo) (*tls.Certificate, error) {
+		log.Debug().Msg("GetCertificate")
+
 		kp.mu.RLock()
 		defer kp.mu.RUnlock()
 
