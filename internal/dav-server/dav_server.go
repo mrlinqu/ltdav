@@ -2,13 +2,11 @@ package dav_server
 
 import (
 	"context"
-	"crypto/tls"
 	"log"
 	"net/http"
 
 	http_auth "github.com/mrlinqu/ltdav/internal/http-auth"
 	secret_provider "github.com/mrlinqu/ltdav/internal/http-auth/secret-provider"
-	x509_keypair_reloader "github.com/mrlinqu/ltdav/internal/x509-keypair-reloader"
 	"github.com/pkg/errors"
 	zlog "github.com/rs/zerolog/log"
 	"golang.org/x/net/webdav"
@@ -79,19 +77,18 @@ func (s *DavServer) ListenAndServe(ctx context.Context) error {
 	}
 
 	if s.certPath != "" || s.keyPath != "" {
-		keyReloader, err := x509_keypair_reloader.New(ctx, s.certPath, s.keyPath)
-		if err != nil {
-			return errors.Wrap(err, "create x509_keypair_reloader")
-		}
+		// keyReloader, err := x509_keypair_reloader.New(ctx, s.certPath, s.keyPath)
+		// if err != nil {
+		// 	return errors.Wrap(err, "create x509_keypair_reloader")
+		// }
 
-		s.srv.TLSConfig = &tls.Config{
-			//MinVersion:               tls.VersionTLS13,
-			GetCertificate: keyReloader.GetCertificateFunc(),
-		}
+		// s.srv.TLSConfig = &tls.Config{
+		// 	//MinVersion:               tls.VersionTLS13,
+		// 	GetCertificate: keyReloader.GetCertificateFunc(),
+		// }
 
-		//s.srv.TLSConfig.GetCertificate = keyReloader.GetCertificateFunc()
-
-		return s.srv.ListenAndServeTLS("", "")
+		//return s.srv.ListenAndServeTLS("", "")
+		return s.srv.ListenAndServeTLS(s.certPath, s.keyPath)
 	}
 
 	return s.srv.ListenAndServe()
