@@ -90,7 +90,7 @@ func (s *DavServer) ListenAndServe(ctx context.Context) error {
 	return s.srv.ListenAndServe()
 }
 
-func (s *DavServer) initTLS(ctx context.Context) (*tls.Config, err) {
+func (s *DavServer) initTLS(ctx context.Context) (*tls.Config, error) {
 	if s.certPath == "" || s.keyPath == "" {
 		return nil, nil
 	}
