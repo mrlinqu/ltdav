@@ -38,17 +38,19 @@ func main() {
 		WithTls(tlsCertPath, tlsKeyPath).
 		WithAuth(authFile, "aaa")
 
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+
 	go func() {
 		err := srv.ListenAndServe(ctx)
 		if err != nil && err != http.ErrServerClosed {
 			log.Error().Err(err).Msg("server listen")
+			c <- os.Signal(nil)
 		}
 	}()
 
 	log.Info().Msg("server started")
 
-	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	<-c
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
