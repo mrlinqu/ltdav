@@ -7,14 +7,18 @@ import (
 type BasicAuthInterceptor struct {
 	realm          string
 	secretProvider SecretProvider
-	handler        http.Handler
+	handler        func(string) http.Handler
 }
 
-func NewBasicAuthInterceptor(handler http.Handler, secretProvider SecretProvider, realm string) *BasicAuthInterceptor {
+func NewBasicAuthInterceptor(
+	userHandler func(string) http.Handler,
+	secretProvider SecretProvider,
+	realm string,
+) *BasicAuthInterceptor {
 	return &BasicAuthInterceptor{
 		realm:          realm,
 		secretProvider: secretProvider,
-		handler:        handler,
+		handler:        userHandler,
 	}
 }
 
@@ -35,7 +39,7 @@ func (a *BasicAuthInterceptor) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	a.handler.ServeHTTP(w, r)
+	a.handler(username).ServeHTTP(w, r)
 }
 
 func (a *BasicAuthInterceptor) unauth(w http.ResponseWriter) {
